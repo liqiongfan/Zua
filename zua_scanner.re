@@ -6,6 +6,7 @@
 #include "zua_scanner_defs.h"
 #include "zua_parser.h"
 #include "zua_type.h"
+#include <ctype.h>
 #include <inttypes.h>
 
 #define YYCTYPE     zua_json_ctype
@@ -166,7 +167,7 @@ LABEL	= [a-zA-Z_\x80-\xff][a-zA-Z0-9_\x80-\xff]*;
                 } else {
                     str = zua_string_append(str, s->str_start+j, i - j);
                 }
-                while (*YYCURSOR == '\n' || *YYCURSOR == ' ' || *YYCURSOR == '\r' || *YYCURSOR == '\t') {
+                while (isspace(*YYCURSOR)) {
                     YYCURSOR++;
                     i++;
                 }

@@ -89,6 +89,9 @@ void zval_free_by_type(zval *v, uint32_t gc) {
         case IS_TRUE:
         case IS_FALSE:
         case IS_NULL:
+        case IS_NAN:
+        case IS_NEGATIVE_INFINITY:
+        case IS_INFINITY:
             break;
     }
     if (gc) zua_free(v);

@@ -130,20 +130,27 @@ Zua is the world's most popular `json` encoding/decoding library in the C/C++ wo
 解码示例
 
 ```C
-zval *r = json_decode(ZUA_STR("{\"code\": 200, \"message\": \"SUCCESS\", \"data\":[1, 2, 3]}"));
+    zval *r = json_decode(ZUA_STR("{\"code\": 200, \"message\": \"SUCCESS\", \"data\":[\"Golang\", \"Java\", \"C/C++\"]}"));
 
-if (r->u2.errcode == ZUA_JSON_SYNTAX_ERROR) {
-    printf("语法错误");
-    return 0;
-}
-if (r->u2.errcode == ZUA_JSON_BRACKET_MISMATCH) {
-    printf("JSON 括号不匹配~");
-    return 0;
-}
-zval *code = zua_get_value(r, ZUA_STR("code"));
-printf("code: %ld\n", Z_LVAL_P(code));
+    if (r->u2.errcode == ZUA_JSON_SYNTAX_ERROR) {
+        printf("语法错误");
+        return 0;
+    }
+    if (r->u2.errcode == ZUA_JSON_BRACKET_MISMATCH) {
+        printf("JSON 括号不匹配~");
+        return 0;
+    }
+    zval *code = zua_get_value(r, ZUA_STR("code"));
+    printf("code: %ld\n", Z_LVAL_P(code));
 
-zval_free(r);
+    zval *lang;
+    zval *data = zua_get_value(r, ZUA_STR("data"));
+    if (data != NULL) {
+        lang = zua_get_value_by_index(data, 2);
+        printf("Language: %s\n", ZSTR_VAL(Z_STR_P(lang)));
+    }
+
+    zval_free(r);
 ```
 
 ---

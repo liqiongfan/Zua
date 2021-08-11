@@ -140,15 +140,10 @@ if (r->u2.errcode == ZUA_JSON_BRACKET_MISMATCH) {
     printf("JSON 括号不匹配~");
     return 0;
 }
-
-zua_string *s = json_encode(r);
-
-if (s != NULL) {
-    printf("%s\n", ZSTR_VAL(s));
-}
+zval *code = zua_get_value(r, ZUA_STR("code"));
+printf("code: %ld\n", Z_LVAL_P(code));
 
 zval_free(r);
-zua_string_free(s);
 ```
 
 ---

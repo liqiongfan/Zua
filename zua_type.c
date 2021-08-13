@@ -468,3 +468,17 @@ static inline zua_string *json_encode_pretty_with_indent(zval *v, const char *in
 ZUA_API zua_string *json_encode_pretty(zval *v) {
     return json_encode_pretty_with_indent(v, ZUA_STR("\t"));
 }
+
+ZUA_API zua_string *zua_file_gets(const char *file_name) {
+    zua_string *r = NULL;
+    FILE *f = fopen(file_name, "r");
+    char buf[MAX_STRING_KEY];
+    while(f && !feof(f)) {
+        if (ferror(f)) break;
+        memset(buf, 0, sizeof(buf));
+        size_t n = fread(buf, sizeof(char), MAX_STRING_KEY - 1, f);
+        if (n >= 1)
+            r = zua_string_append(r, buf, strlen(buf));
+    }
+    return r;
+}

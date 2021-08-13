@@ -3,16 +3,11 @@
 
 int main(int argc, char *argv[]) {
 
-    zval *response = json_decode(ZUA_STR("{\n"
-                                         "  // comments\n"
-                                         "  unquoted: 'and you can quote me on that',\n"
-                                         "  singleQuotes: 'I can use \"double quotes\" here',\n"
-                                         "  lineBreaks: \"Look, Mom! \\\n"
-                                         "No \\\\n's!\",\n"
-                                         "  positiveSign: +1,\n"
-                                         "  trailingComma: 'in objects', andIn: ['arrays',],\n"
-                                         "  \"backwardsCompatible\": \"with JSON\",\n"
-                                         "}"));
+    zua_string *file_json = zua_file_gets("../examples/file.json");
+
+    zval *response = json_decode(ZSTRL(file_json));
+    printf("%s\n", ZSTR_VAL(file_json));
+
     if (response->u2.errcode != 0) {
         printf("解析错误~");
         zval_free(response);
@@ -25,6 +20,7 @@ int main(int argc, char *argv[]) {
     printf("lineBreaks: %s\n", ZSTR_VAL(Z_STR_P(lineBreaks)));
 
     zval_free(response);
+    zua_string_free(file_json);
 
     return 0;
 }

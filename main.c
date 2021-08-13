@@ -14,7 +14,7 @@ int main(int argc, char *argv[]) {
         return 0;
     }
     zval *unquoted = zua_get_value(response, ZUA_STR("unquoted"));
-    printf("unquoted:%ld\n", Z_LVAL_P(unquoted));
+    printf("unquoted:%s\n", ZSTR_VAL(Z_STR_P(unquoted)));
 
     zval *lineBreaks = zua_get_value(response, ZUA_STR("lineBreaks"));
     printf("lineBreaks: %s\n", ZSTR_VAL(Z_STR_P(lineBreaks)));

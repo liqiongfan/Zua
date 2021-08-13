@@ -54,6 +54,10 @@ Zua 采用纯C语言开发, 可以在任意支持标准C的机器上运行，占
 
 ### APIs
 
++ ZUA_API zua_string *zua_file_gets(const char *file_name)：
+
+    读取文件全部内容为`zua_string`,返回数据需要 `zua_string_free`
+
 + zval *json_decode(const char *str, unsigned int str_len):
 
     解码`JSON`字符串

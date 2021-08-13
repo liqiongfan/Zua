@@ -488,5 +488,6 @@ ZUA_API zua_string *zua_file_gets(const char *file_name) {
         if (n >= 1)
             r = zua_string_append(r, buf, strlen(buf));
     }
+    fclose(f);
     return r;
 }

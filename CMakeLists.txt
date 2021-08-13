@@ -18,7 +18,3 @@ add_executable(zua
         zua_type.c
         zua_parser.c
 )
-
-#%define api.prefix {php_json_yy}
-#%define api.pure full
-#%param  { json_parser *parser  }

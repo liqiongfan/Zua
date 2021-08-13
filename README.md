@@ -1,162 +1,125 @@
-## Zua - another json tool written in pure C.
+## Zua 一个易用的 `JSON` & `JSON5` 解析引擎
 
-Zua is the json encoding/decoding tool written in pure C. which depends on `re2c` & `bison`, The lexer parsing command:
+Zua 采用纯C语言开发, 可以在任意支持标准C的机器上运行，占用内存少，解码格式多的特点，既可以解析 标准`JSON` 也可以解析`JSON5`格式
+内存采用 `HashMap` 结构保存数据，查询性能能够达到 O(1), 无内存泄漏风险.
 
-```shell script
-re2c -t zua_scanner_defs.h -bci -o zua_scanner.c --no-generation-date zua_scanner.re
-```
 
-The bison grammar parsing file:
+## 项目地址
 
-```shell script
-bison --defines -l zua_parser.y -o zua_parser.c
-```
+`https://github.com/liqiongfan/Zua`
 
-Currently developing the `JSON5`, now support the following rules:
+### 设计理念
 
-**Objects**
----
+整个解析引擎使用 `zval` 结构体(struct _zua_struct) 来表达各个节点值，为了达到 O(1) 的查询性能，解析的数据存储到 `HashMap` 。
 
-- [x] Object keys may be an ECMAScript 5.1 IdentifierName.
-- [x] Objects may have a single trailing comma.
 
-**Arrays**
----
+### JSON5 特性
 
-- [x] Arrays may have a single trailing comma.
+##### Objects(对象)
 
-**Strings**
----
+- [x] 对象的键名可以不使用引号
+- [x] 对象的键名可以使用单引号
+- [x] 对象元素的末尾可以以一个逗号结束
 
-- [x] Strings may be single quoted.
-- [x] Strings may span multiple lines by escaping new line characters.
-- [x] Strings may include character escapes.
 
-**Numbers**
----
+##### Arrays(数组)
 
-- [x] Numbers may be hexadecimal.
-- [x] Numbers may have a leading or trailing decimal point.
-- [x] Numbers may be IEEE 754 positive infinity, negative infinity, and NaN.
-- [x] Numbers may begin with an explicit plus sign.
+- [x] 数组元素的末尾可以以一个逗号结束
 
-**Comments**
----
 
-- [x] Single and multi-line comments are allowed.
+##### Strings(字符串)
 
-**White Space**
----
+- [x] 字符串可以使用单引号
+- [x] 字符串可以跨越多行, 每行以转义符 '\' 结尾
+- [x] 字符串可以包含转义字符
 
-- [x] Additional white space characters are allowed.
 
-### Features
+##### Numbers(数字)
 
-Zua is the world's most popular `json` encoding/decoding library in the C/C++ world.
-+ Support Comments, such as `//` or `/* Hello This is the comments */`
-+ Support long int
-+ Support boolean true/false
-+ Support null
-+ Support json pretty
-+ Support Hexadecimal
-+ Support NaN、 Infinity、 -Infinity
-+ Support JSON5(100%).
+- [x] 数字可以是十六进制
+- [x] 浮点数字可以只是单纯的 '.' 或者 以 '.' 开头或者结尾
+- [x] 数字可以是 IEEE754标准的无穷大(Infinity)或者负无穷大(-Infinity)以及Nan
+- [x] 正数可以使用'+'明确指定
+
+
+##### Comments(注释)
+
+- [x] 可以使用单行注释(`//`)或者多行注释(`/* */`)
+
+
+##### White Space(空白符)
+
+- [x] 允许额外的空白字符
+
 
 ### APIs
 
-+ zval *json_decode(const char *str, unsigned int str_len)
++ zval *json_decode(const char *str, unsigned int str_len):
 
-    解码 `JSON` 字符串为 `zval` 结构体, 便于查询使用
+    解码`JSON`字符串
 
----
++ zua_string *json_encode(zval *v):
 
-+ zua_string *json_encode(zval *val)
+    编码为`JSON`字符串
 
-    编码 `zval` 为 `JSON` 字符串
++ zua_string *json_encode_pretty(zval *val):
 
----
-+ zua_string *json_encode_pretty(zval *val)
+    编码为格式化的`JSON`字符串
 
-    编码 `zval` 为 `JSON` 字符串，美化JSON输出
++ zval *zua_get_value(zval *v, const char *key, unsigned int key_len):
 
----
+    从对象中查询指定`key`的值
 
-+ zval *zua_get_value(zval *v, const char *key, unsigned int key_len)
++ zval *zua_get_value_by_index(zval *v, uint32_t index):
 
-    从对象中获取数据, key为键值, key_len为键的长度
+    从数组中查询指定索引坐标的值，偏移值从 `0` 开始计数
 
----
++ zval *zval_init():
 
-+ zval *zua_get_value_by_index(zval *v, uint32_t index)
+    得到一个分配好内存的`zval`
 
-    从数组中获取数据, index为数组的索引位置
++ object_init(zval *v):
 
----
-+ zval *zval_init();
+    初始化为对象
 
-    初始化一个zval结构体
----
-+ object_init(zval *v)
++ array_init(zval *v):
 
-    将 `zval` 初始化为 `object`
+    初始化为数组
 
----
-+ array_init(zval *v)
++ zua_hash_str_add_or_update(zval *h, const char *key, uint32_t key_len, zval *value):
 
-    将 `zval` 初始化为 `array`
+    往对象里面新增`key` & `value`对
 
----
-+ zval_free(zval *v)
++ void zua_hash_index_add(zval *h, zval *value):
 
-    释放 `zval` 结构体占用的内存
+    往数组里面新增值
 
----
-+ zua_hash_str_add_or_update(zval *h, const char *key, uint32_t key_len, zval *value)
++ zval_free(zval *v):
 
-    添加 `key` `value` 到 `zval` `h` 中
-
----
-+ void zua_hash_index_add(zval *h, zval *value)
-
-    添加 `value` 到 `zval` `h` 中
-
-### Notice
-
-底层采用 `HashMap` 存储数据, 所以数据的顺序不保证跟输入的顺序一致
+    释放内存
 
 
-### Examples
+### 示例
 
-解码示例
++ 解码
 
 ```C
-    zval *r = json_decode(ZUA_STR("{\"code\": 200, \"message\": \"SUCCESS\", \"data\":[\"Golang\", \"Java\", \"C/C++\"]}"));
+zval *response = json_decode("{ code: 200, message: "SUCCESS" }");
+if (response->u2.errcode != 0) {
+    printf("解析错误~");
+    zval_free(response);
+    return 0;
+}
+zval *code = zua_get_value(response, ZUA_STR("code"));
+printf("code:%ld\n", Z_LVAL_P(code));
 
-    if (r->u2.errcode == ZUA_JSON_SYNTAX_ERROR) {
-        printf("语法错误");
-        return 0;
-    }
-    if (r->u2.errcode == ZUA_JSON_BRACKET_MISMATCH) {
-        printf("JSON 括号不匹配~");
-        return 0;
-    }
-    zval *code = zua_get_value(r, ZUA_STR("code"));
-    printf("code: %ld\n", Z_LVAL_P(code));
-
-    zval *lang;
-    zval *data = zua_get_value(r, ZUA_STR("data"));
-    if (data != NULL) {
-        lang = zua_get_value_by_index(data, 2);
-        printf("Language: %s\n", ZSTR_VAL(Z_STR_P(lang)));
-    }
-
-    zval_free(r);
+zval_free(response);
 ```
 
----
-编码示例
 
-```c
++ 编码
+
+```C
 zval *obj = zval_init();
 object_init(obj);
 

@@ -3,23 +3,26 @@
 
 int main(int argc, char *argv[]) {
 
-    zval *response = json_decode(ZUA_STR("{ code: 200, message: 'SUCCESS', language: ['Golang', 'C/C++'] }"));
+    zval *response = json_decode(ZUA_STR("{\n"
+                                         "  // comments\n"
+                                         "  unquoted: 'and you can quote me on that',\n"
+                                         "  singleQuotes: 'I can use \"double quotes\" here',\n"
+                                         "  lineBreaks: \"Look, Mom! \\\n"
+                                         "No \\\\n's!\",\n"
+                                         "  positiveSign: +1,\n"
+                                         "  trailingComma: 'in objects', andIn: ['arrays',],\n"
+                                         "  \"backwardsCompatible\": \"with JSON\",\n"
+                                         "}"));
     if (response->u2.errcode != 0) {
         printf("解析错误~");
         zval_free(response);
         return 0;
     }
-    zval *code = zua_get_value(response, ZUA_STR("code"));
-    code != NULL && printf("code:%ld\n", Z_LVAL_P(code));
+    zval *unquoted = zua_get_value(response, ZUA_STR("unquoted"));
+    printf("unquoted:%ld\n", Z_LVAL_P(unquoted));
 
-    zval *message = zua_get_value(response, ZUA_STR("message"));
-    message != NULL && printf("message: %s\n", ZSTR_VAL(Z_STR_P(message)));
-
-    zval *lang = zua_get_value(response, ZUA_STR("language"));
-    if (lang != NULL) {
-        zval *favor_language = zua_get_value_by_index(lang, 0);
-        printf("Favor Language: %s\n", ZSTR_VAL(Z_STR_P(favor_language)));
-    }
+    zval *lineBreaks = zua_get_value(response, ZUA_STR("lineBreaks"));
+    printf("lineBreaks: %s\n", ZSTR_VAL(Z_STR_P(lineBreaks)));
 
     zval_free(response);
 

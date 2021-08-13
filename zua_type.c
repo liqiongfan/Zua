@@ -168,13 +168,15 @@ ZUA_API zval *zua_get_value(zval *v, const char *key, uint32_t key_len) {
 }
 
 ZUA_API zval *zua_get_value_by_index(zval *v, uint32_t index) {
+    zval *ret = NULL;
     if (Z_TYPE_P(v) == IS_ARRAY) {
         char *keyBuf = zua_malloc(sizeof(char) * MAX_STRING_KEY);
         bzero(keyBuf, sizeof(char) * MAX_STRING_KEY);
         sprintf(keyBuf, "%d", index);
-        return hashmap_get(Z_ARR_P(v), keyBuf, strlen(keyBuf));
+        ret = hashmap_get(Z_ARR_P(v), keyBuf, strlen(keyBuf));
+        zua_free(keyBuf);
     }
-    return NULL;
+    return ret;
 }
 
 ZUA_API zua_string *json_encode(zval *v) {

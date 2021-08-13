@@ -120,11 +120,19 @@ ZUA_API void zua_hash_str_add_or_update(zval *h, const char *key, uint32_t key_l
     switch (Z_TYPE_P(h)) {
         case IS_ARRAY:
         {
+            zval *v = hashmap_get(Z_ARR_P(h), k, key_len);
+            if (v != HASHMAP_NULL) {
+                zval_free(v);
+            }
             hashmap_put(Z_ARR_P(h), k, key_len, v1);
             break;
         }
         case IS_OBJECT:
         {
+            zval *v = hashmap_get(Z_OBJ_P(h), k, key_len);
+            if (v != HASHMAP_NULL) {
+                zval_free(v);
+            }
             hashmap_put(Z_OBJ_P(h), k, key_len, v1);
             break;
         }

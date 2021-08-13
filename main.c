@@ -3,7 +3,7 @@
 
 int main(int argc, char *argv[]) {
 
-    zua_string *file_json = zua_file_gets("../examples/file.json");
+    zua_string *file_json = zua_file_gets("../examples/file.json5");
 
     zval *response = json_decode(ZSTRL(file_json));
     printf("%s\n", ZSTR_VAL(file_json));

@@ -476,6 +476,35 @@ ZUA_API zua_string *json_encode_pretty(zval *v) {
     return json_encode_pretty_with_indent(v, ZUA_STR("\t"));
 }
 
+ZUA_API zval *zua_get_value_by_path(zval *r, const char *str, uint32_t str_len) {
+    uint32_t i = 0, j = 0;
+    
+    zval *t = NULL;
+    zua_hashmap *map = NULL;
+    
+    if (Z_TYPE_P(r) == IS_ARRAY) {
+        map = Z_ARR_P(r);
+    } else if (Z_TYPE_P(r) == IS_OBJECT) {
+        map = Z_OBJ_P(r);
+    }
+    
+    for (; i < str_len; i++) {
+        if (str[i] == '.') {
+            t = hashmap_get(map, str + j, i - j);
+            if (Z_TYPE_P(t) == IS_ARRAY) {
+                map = Z_ARR_P(t);
+            } else if (Z_TYPE_P(t) == IS_OBJECT) {
+                map = Z_OBJ_P(t);
+            } else {
+                return t;
+            }
+            j = i + 1;
+        }
+    }
+    
+    return hashmap_get(map, str + j, i - j);
+}
+
 ZUA_API zua_string *zua_file_gets(const char *file_name) {
     zua_string *r = NULL;
     FILE *f = fopen(file_name, "r");

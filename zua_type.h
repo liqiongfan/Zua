@@ -193,5 +193,6 @@ ZUA_API zval *json_decode(const char *str, uint32_t str_len);
 ZUA_API zval *zua_get_value(zval *v, const char *key, uint32_t key_len);
 ZUA_API zval *zua_get_value_by_index(zval *v, uint32_t index);
 ZUA_API zua_string *zua_file_gets(const char *file_name);
+ZUA_API zval *zua_get_value_by_path(zval *r, const char *str, uint32_t str_len);
 
 #endif

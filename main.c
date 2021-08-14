@@ -18,6 +18,9 @@ int main(int argc, char *argv[]) {
 
     zval *lineBreaks = zua_get_value(response, ZUA_STR("lineBreaks"));
     printf("lineBreaks: %s\n", ZSTR_VAL(Z_STR_P(lineBreaks)));
+    
+    zval *positiveSign = zua_get_value_by_path(response, ZUA_STR("test.cc.4"));
+    printf("positiveSign: %s\n", ZSTR_VAL(Z_STR_P(positiveSign)));
 
     zval_free(response);
     zua_string_free(file_json);

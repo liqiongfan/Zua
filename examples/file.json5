@@ -4,6 +4,10 @@
   singleQuotes: 'I can use "double quotes" here',
   lineBreaks: "Look, Mom! \
   No \\n's!",
+  test: {
+    "bb": "test.bb",
+    "cc": [11, 22, 33, 44, "55"]
+  },
   positiveSign: +1,
   trailingComma: 'in objects', andIn: ['arrays',],
   "backwardsCompatible": "with JSON",

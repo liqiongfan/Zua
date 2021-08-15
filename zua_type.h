@@ -17,6 +17,9 @@ typedef struct hashmap_s          zua_object;
 #define zua_free                  free
 #define zua_malloc                malloc
 #define ZUA_API
+typedef int bool;
+#define TRUE    1
+#define FALSE   0
 
 typedef struct _zua_string {
     uint32_t len;
@@ -189,10 +192,14 @@ if (ele->in_use) {
 
 ZUA_API zua_string *json_encode(zval *v);
 ZUA_API zua_string *json_encode_pretty(zval *v);
+
 ZUA_API zval *json_decode(const char *str, uint32_t str_len);
+
 ZUA_API zval *zua_get_value(zval *v, const char *key, uint32_t key_len);
 ZUA_API zval *zua_get_value_by_index(zval *v, uint32_t index);
-ZUA_API zua_string *zua_file_gets(const char *file_name);
 ZUA_API zval *zua_get_value_by_path(zval *r, const char *str, uint32_t str_len);
+ZUA_API bool  zua_in_array(zval *r, zval *value);
+
+ZUA_API zua_string *zua_file_gets(const char *file_name);
 
 #endif

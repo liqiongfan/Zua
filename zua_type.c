@@ -505,6 +505,80 @@ ZUA_API zval *zua_get_value_by_path(zval *r, const char *str, uint32_t str_len) 
     return hashmap_get(map, str + j, i - j);
 }
 
+ZUA_API bool zua_in_array(zval *r, zval *value) {
+    zua_hashmap *map = NULL;
+    if (Z_TYPE_P(r) == IS_OBJECT) {
+        map = Z_OBJ_P(r);
+    } else if (Z_TYPE_P(r) == IS_ARRAY) {
+        map = Z_ARR_P(r);
+    }
+    
+    uint32_t i;
+    zval *v = NULL;
+    zua_hashmap_ele *e;
+    ZUA_HASHMAP_FOREACH_ELE(map, i, e) {
+        v = e->data;
+        
+        switch ( Z_TYPE_P(value) ) {
+            case IS_NAN:
+            {
+                if (Z_TYPE_P(v) == IS_NAN) return TRUE;
+                break;
+            }
+            case IS_NEGATIVE_INFINITY:
+            {
+                if (Z_TYPE_P(v) == IS_NEGATIVE_INFINITY) return TRUE;
+                break;
+            }
+            case IS_INFINITY:
+            {
+                if (Z_TYPE_P(v) == IS_INFINITY) return TRUE;
+                break;
+            }
+            case IS_ARRAY:
+            case IS_OBJECT:
+            {
+                return FALSE;
+            }
+            case IS_DOUBLE:
+            {
+                if(Z_TYPE_P(v) == IS_DOUBLE && (Z_DVAL_P(v) - Z_DVAL_P(value) <= 0)) return TRUE;
+                break;
+            }
+            case IS_STRING:
+            {
+                if(Z_TYPE_P(v) == IS_STRING && ( ZSTR_LEN(Z_STR_P(v)) == ZSTR_LEN(Z_STR_P(value)) ) &&
+                (0 == strncasecmp(ZSTR_VAL(Z_STR_P(value)), ZSTR_VAL(Z_STR_P(v)), ZSTR_LEN(Z_STR_P(v))))) return TRUE;
+                break;
+            }
+            case IS_NULL:
+            {
+                if(Z_TYPE_P(v) == IS_NULL) return TRUE;
+                break;
+            }
+            case IS_FALSE:
+            {
+                if(Z_TYPE_P(v) == IS_FALSE) return TRUE;
+                break;
+            }
+            case IS_TRUE:
+            {
+                if(Z_TYPE_P(v) == IS_TRUE) return TRUE;
+                break;
+            }
+            case IS_LONG:
+            {
+                if(Z_TYPE_P(v) == IS_LONG && Z_LVAL_P(v) == Z_LVAL_P(value)) return TRUE;
+                break;
+            }
+            default:
+                return FALSE;
+        }
+    } ZUA_HASHMAP_FOREACH_END();
+    
+    return FALSE;
+}
+
 ZUA_API zua_string *zua_file_gets(const char *file_name) {
     zua_string *r = NULL;
     FILE *f = fopen(file_name, "r");

@@ -77,6 +77,14 @@ Zua 采用纯C语言开发, 可以在任意支持标准C的机器上运行，占
 + zval *zua_get_value_by_index(zval *v, uint32_t index):
 
     从数组中查询指定索引坐标的值，偏移值从 `0` 开始计数
+    
++ zval *zua_get_value_by_path(zval *r, const char *str, uint32_t str_len)：
+    
+    使用点号的字符串查询 `JSON` 格式获取数据
+    
++ bool zua_in_array(zval *r, zval *value):
+
+    查询 value 是否在 r 中，注意如果 value 是 `array` 或者 `object` 则直接返回 FALSE
 
 + zval *zval_init():
 

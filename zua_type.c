@@ -319,7 +319,7 @@ ZUA_API zua_string *json_encode(zval *v) {
     return r;
 }
 
-static inline zua_string *json_encode_pretty_with_indent(zval *v, const char *indent_str, uint32_t indent_str_len) {
+static inline zua_string *json_encode_pretty_with_indent(zval *v, const char *indent_str, uint32_t indent_str_len, const char *raw_indent_str, uint32_t initial_indent_str_len) {
     if (Z_TYPE_P(v) == 0) return NULL;
     
     char str[MAX_STRING_KEY];
@@ -446,10 +446,10 @@ static inline zua_string *json_encode_pretty_with_indent(zval *v, const char *in
                 break;
             case IS_OBJECT:
             case IS_ARRAY:
-                indent = zua_string_append(indent, ZUA_STR("\t"));
-                t = json_encode_pretty_with_indent(val, ZSTRL(indent));
+                indent = zua_string_append(indent, raw_indent_str, initial_indent_str_len);
+                t = json_encode_pretty_with_indent(val, ZSTRL(indent), raw_indent_str, initial_indent_str_len);
                 r = zua_string_append(r, ZSTRL(t));
-                ZSTRL(indent) -= 1;
+                ZSTRL(indent) -= initial_indent_str_len;
                 zua_string_free(t);
                 break;
         }
@@ -458,7 +458,7 @@ static inline zua_string *json_encode_pretty_with_indent(zval *v, const char *in
     
     if (ZSTR_VAL(r)[ZSTR_LEN(r) - 1] == '\n' && ZSTR_VAL(r)[ZSTR_LEN(r) - 2] == ',') ZSTR_LEN(r)-=2;
     
-    ZSTRL(indent) -= 1;
+    ZSTRL(indent) -= initial_indent_str_len;
     r = zua_string_append(r, ZUA_STR("\n"));
     r = zua_string_append(r, ZSTRL(indent));
     
@@ -473,7 +473,7 @@ static inline zua_string *json_encode_pretty_with_indent(zval *v, const char *in
 }
 
 ZUA_API zua_string *json_encode_pretty(zval *v) {
-    return json_encode_pretty_with_indent(v, ZUA_STR("\t"));
+    return json_encode_pretty_with_indent(v, ZUA_STR2("     "));
 }
 
 ZUA_API zval *zua_get_value_by_path(zval *r, const char *str, uint32_t str_len) {

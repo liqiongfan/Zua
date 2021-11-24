@@ -27,6 +27,7 @@ typedef struct _zua_string {
 } zua_string;
 
 #define ZUA_STR(s)   (s), (sizeof(s)-1)
+#define ZUA_STR2(s)   (s), (sizeof(s)-1), (s), (sizeof(s)-1)
 #define ZSTR_LEN(s)  (s)->len
 #define ZSTR_VAL(s)  (s)->v
 #define ZSTRL(s) ZSTR_VAL(s), ZSTR_LEN(s)

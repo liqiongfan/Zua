@@ -6,7 +6,8 @@ Zua 采用纯C语言开发, 可以在任意支持标准C的机器上运行，占
 
 ## C++版本
 
-`https://github.com/liqiongfan/jsoncpp`
+C++ Language press this to obtain: [jsoncpp](https://github.com/liqiongfan/jsoncpp)
+<https://github.com/liqiongfan/jsoncpp>
 
 建议C++语言使用上面的C++版本
 

@@ -4,6 +4,13 @@ Zua 采用纯C语言开发, 可以在任意支持标准C的机器上运行，占
 采用 `HashMap` 结构保存数据，查询性能能够达到 O(1), 无内存泄漏风险.
 
 
+## C++版本
+
+`https://github.com/liqiongfan/jsoncpp`
+
+建议C++语言使用上面的C++版本
+
+
 ## 项目地址
 
 `https://github.com/liqiongfan/Zua`
